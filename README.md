@@ -213,6 +213,19 @@ public class RestaurantController {
 ![식당DB 저장](https://github.com/user-attachments/assets/a7fa90d7-275b-4f72-9011-b9c01950bd7d) <br>
 <br>
 
+### :bulb: MySQL DB 설정 <br>
+1. dependencies 추가 <br>
+
+
+
+
+
+
+
+
+
+
+
 ### :bulb: 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
 1. dependencies 추가 <br>
 ### build.gradle.kts
