@@ -1,4 +1,4 @@
-:bulb: **식당정보 CSV 파일과 이미지 파일을 DB에 저장하기** <br>
+### :bulb: 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기 <br>
 1. 식당 정보를 restaurantDB.csv 파일로 작성하여 `(프로젝트폴더)/src/main/resources/data` 폴더에 저장
 ### restaurantDB.csv
 ```Java
@@ -200,4 +200,79 @@ public class RestaurantController {
     }
 }
 ```
-![db저장](https://github.com/user-attachments/assets/271e3274-51b3-4033-986c-5211b72c86f2)
+![db저장](https://github.com/user-attachments/assets/271e3274-51b3-4033-986c-5211b72c86f2) <br>
+<br>
+### :bulb: 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
+1. dependencies 추가 <br>
+### build.gradle.kts
+```Java
+implementation("com.google.android.gms:play-services-maps:17.0.1")
+```
+
+2. Manifest에 permission 추가 <br>
+### AndroidManifest.xml
+```Java
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+```
+
+3. 구글맵 API Key 추가 <br>
+```Java
+<application
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name">
+    
+    <!-- Google Maps API Key 설정 -->
+    <meta-data
+        android:name="com.google.android.geo.API_KEY"
+        android:value="API_KEY" />
+    
+</application>
+```
+
+4. 구글맵을 띄울 레이아웃 만들기 <br>
+### activity_main.xml
+```Java
+<fragment
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+```
+
+5. 액티비티 구현 <br>
+예시로 서울에 마커를 찍어본다. <br>
+```Java
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // SupportMapFragment를 얻고, 비동기적으로 지도를 초기화합니다.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    // 지도가 준비되었을 때 호출됩니다.
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // 위도, 경도 데이터 (예시: 서울)
+        LatLng location = new LatLng(37.5665, 126.9780); // 서울의 위도, 경도
+
+        // 지도에 마커 추가
+        mMap.addMarker(new MarkerOptions().position(location).title("서울"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 10)); // 10은 줌 레벨
+    }
+}
+```
+![image](https://github.com/user-attachments/assets/fb1d2697-eb63-4b77-8adb-16dcbe48f087) <br>
+
+6. 스프링부트에서 식당정보 DB를 가져와 위도, 경도에 맞는 위치에 마커 표시하기 <br>
