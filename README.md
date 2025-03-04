@@ -1,4 +1,4 @@
-### :bulb: 1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기 <br>
+### :bulb: [1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기](https://github.com/peh1212/HannipmanApp/blob/main/1.%20HannipmanApp.zip) <br>
 1. 식당 정보를 restaurantDB.csv 파일로 작성하여 `(프로젝트폴더)/src/main/resources/data` 폴더에 저장
 ### restaurantDB.csv
 ```Java
