@@ -253,11 +253,12 @@ public class RetrofitController {
 
 
 
-### :bulb: 2. MySQL DB 설정 <br>
-1. dependencies 추가 <br>
+### :bulb: 2. MySQL DB 연동 <br>
+1. 설치하기 <br>
+`참고 링크` : https://code-angie.tistory.com/158 <br>
 
-
-
+2. 스프링부트와 연동하기 <br>
+`참고 링크` : https://velog.io/@jeongm2n/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-MySQL-%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0 <br>
 
 
 
