@@ -1,4 +1,4 @@
-### :bulb: 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기 <br>
+### :bulb: 1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기 <br>
 1. 식당 정보를 restaurantDB.csv 파일로 작성하여 `(프로젝트폴더)/src/main/resources/data` 폴더에 저장
 ### restaurantDB.csv
 ```Java
@@ -213,7 +213,47 @@ public class RestaurantController {
 ![식당DB 저장](https://github.com/user-attachments/assets/a7fa90d7-275b-4f72-9011-b9c01950bd7d) <br>
 <br>
 
-### :bulb: MySQL DB 설정 <br>
+8. DB 정보를 JSON으로 반환해주는 컨트롤러 구현 <br>
+### RetrofitController.java
+```Java
+@RestController
+@RequestMapping("/api/restaurants") // API의 기본 경로 설정
+public class RetrofitController {
+
+    private final RestaurantRepo restaurantRepo;
+
+    // Repository를 주입 받습니다.
+    public RetrofitController(RestaurantRepo restaurantRepo) {
+        this.restaurantRepo = restaurantRepo;
+    }
+
+    // 모든 Restaurant 데이터 반환
+    @GetMapping
+    public List<Restaurant> getAllRestaurants() {
+        return restaurantRepo.findAll(); // Repository를 통해 모든 데이터를 반환
+    }
+
+    // 특정 ID의 Restaurant 데이터 반환
+    @GetMapping("/{id}")
+    public Restaurant getRestaurantById(@PathVariable Long id) {
+        return restaurantRepo.findById(id).orElseThrow(() ->
+                new RuntimeException("Restaurant not found with id: " + id)
+        );
+    }
+
+    // 새로운 Restaurant 데이터 생성
+    @PostMapping
+    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
+        return restaurantRepo.save(restaurant); // 새로운 데이터 저장
+    }
+}
+```
+![image](https://github.com/user-attachments/assets/62b21ce4-ca89-40d4-a05b-a71cd95675ef) <br>
+<br>
+
+
+
+### :bulb: 2. MySQL DB 설정 <br>
 1. dependencies 추가 <br>
 
 
