@@ -283,6 +283,7 @@ spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
 `[비밀번호]` : 설치할때 입력한 비밀번호 <br><br>
 
 `build.gradle` dependencies에 mysql 의존성 추가 후 Gradle Sync하기 <br>
+### build.gradle
 ```Java
 implementation 'mysql:mysql-connector-java:8.0.29'
 ```
