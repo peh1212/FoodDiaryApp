@@ -302,7 +302,7 @@ private byte[] image;
 ![image](https://github.com/user-attachments/assets/6acaeb00-46ba-4de8-97f8-55791ff57a48) <br>
 MySQL DB에서 데이터가 잘 저장된 것을 확인한다. <br><br>
 
-중복저장 피하기 <br>
+3. 중복저장 피하기 <br>
 스프링부트 서버를 실행할때마다 똑같은 데이터가 20개씩 늘어나므로 CSVDataLoader에 중복저장을 피하는 로직을 추가한다. <br>
 ### CSVDataLoader.java
 ```Java
