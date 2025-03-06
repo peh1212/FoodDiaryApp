@@ -253,7 +253,7 @@ public class RetrofitController {
 
 
 
-### :bulb: 2. MySQL DB 연동 <br>
+### :bulb: [2. MySQL DB 연동](https://github.com/peh1212/HannipmanApp/blob/main/2.%20HannipmanApp.zip) <br>
 1. 설치하기 <br>
 `참고 링크` : https://code-angie.tistory.com/158 <br>
 설치 시 입력한 비밀번호를 기억해야한다<br>
