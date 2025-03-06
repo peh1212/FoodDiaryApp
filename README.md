@@ -302,7 +302,78 @@ private byte[] image;
 ![image](https://github.com/user-attachments/assets/6acaeb00-46ba-4de8-97f8-55791ff57a48) <br>
 MySQL DB에서 데이터가 잘 저장된 것을 확인한다. <br><br>
 
+중복저장 피하기 <br>
+스프링부트 서버를 실행할때마다 똑같은 데이터가 20개씩 늘어나므로 CSVDataLoader에 중복저장을 피하는 로직을 추가한다. <br>
+### CSVDataLoader.java
+```Java
+@Service
+public class CSVDataLoader {
 
+    @Autowired
+    private RestaurantRepo restaurantRepo;
+
+    @PostConstruct
+    public void loadDataFromCSVAndImages() {
+        String csvFilePath = "src/main/resources/data/restaurantDB.csv";
+        String imageDirectoryPath = "src/main/resources/images/";
+
+        try (CSVReader reader = new CSVReader(new FileReader(csvFilePath))) {
+            String[] line;
+            reader.readNext(); // 헤더 건너뛰기
+
+            while ((line = reader.readNext()) != null) {
+                // 중복 검사
+                if (!restaurantRepo.existsByName(line[1])) {
+                    Restaurant restaurant = new Restaurant();
+                    restaurant.setName(line[1]);
+                    restaurant.setMenu(Arrays.asList(line[2].split(",")));
+                    restaurant.setPrice(parsePrices(line[3]));
+                    restaurant.setRating(Double.parseDouble(line[4]));
+                    restaurant.setLatitude(Double.parseDouble(line[5]));
+                    restaurant.setLongitude(Double.parseDouble(line[6]));
+
+                    // 이미지 파일 읽어오기
+                    String imageFileName = line[0] + ".jpg"; // 예: "1.jpg"
+                    File imageFile = new File(imageDirectoryPath + imageFileName);
+                    if (imageFile.exists()) {
+                        byte[] imageData = FileCopyUtils.copyToByteArray(new FileInputStream(imageFile));
+                        restaurant.setImage(imageData);
+                    } else {
+                        System.out.println(imageFileName + " 파일을 찾을 수 없습니다.");
+                    }
+
+                    restaurantRepo.save(restaurant);
+                } else {
+                    System.out.println(line[1] + " 이미 존재합니다.");
+                }
+            }
+            System.out.println("CSV 데이터와 이미지를 성공적으로 저장했습니다!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private List<Integer> parsePrices(String priceData) {
+        String[] prices = priceData.split(",");
+        List<Integer> priceList = new ArrayList<>();
+        for (String price : prices) {
+            priceList.add(Integer.parseInt(price));
+        }
+        return priceList;
+    }
+}
+```
+
+<br>
+
+### RestaurantRepo
+```Java
+interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
+    boolean existsByName(String name);
+}
+```
+
+<br>
 
 <br><br><br><br><br><br>
 <br><br><br><br><br><br>
