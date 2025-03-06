@@ -222,7 +222,7 @@ public class RetrofitController {
 
     private final RestaurantRepo restaurantRepo;
 
-    // Repository를 주입 받습니다.
+    // Repository 주입
     public RetrofitController(RestaurantRepo restaurantRepo) {
         this.restaurantRepo = restaurantRepo;
     }
@@ -256,15 +256,54 @@ public class RetrofitController {
 ### :bulb: 2. MySQL DB 연동 <br>
 1. 설치하기 <br>
 `참고 링크` : https://code-angie.tistory.com/158 <br>
+설치 시 입력한 비밀번호를 기억해야한다<br>
 
 2. 스프링부트와 연동하기 <br>
-`참고 링크` : https://velog.io/@jeongm2n/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8-MySQL-%EC%97%B0%EB%8F%99%ED%95%98%EA%B8%B0 <br>
+MySQL Workbench에서 커넥션을 추가한다. <br>
+![image](https://github.com/user-attachments/assets/9942a091-6043-41f6-8d7d-53ad5bae3b49) <br><br>
+DB를 생성한다. <br>
+![image](https://github.com/user-attachments/assets/c87d4edf-cb4b-402b-8dd5-e32cb6a72e3f) <br><br>
+
+`application.properties`에 설정을 추가한다. <br>
+H2 DB와 겹치는 설정은 지워준다. <br>
+### application.properties
+```Java
+spring.datasource.url=jdbc:mysql://[서버주소:포트번호]/[DB이름]?useSSL=false&serverTimezone=UTC
+spring.datasource.username=[사용자이름]
+spring.datasource.password=[비밀번호]
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+```
+`[서버주소:포트번호]` : 커넥션 추가에서 입력한 서버주소와 포트번호 <br>
+`[DB이름]` : 위에서 생성한 DB 이름 <br>
+`[사용자이름]` : 따로 설정 안했을 시 기본값 root <br>
+`[비밀번호]` : 설치할때 입력한 비밀번호 <br><br>
+
+`build.gradle` dependencies에 mysql 의존성 추가 후 Gradle Sync하기 <br>
+```Java
+implementation 'mysql:mysql-connector-java:8.0.29'
+```
+
+<br>
+Restaurant 엔티티에서 image의 컬럼을 `LONGBLOB` 타입으로 설정해준다. <br>
+(그냥 실행하면 H2 DB에서는 잘 되지만 MySQL에서는 오류가 뜨는데 둘이 데이터 처리방식이 달라서 그렇다고 함) <br>
+
+### Restaurant.java
+```Java
+@Lob
+@Column(columnDefinition = "LONGBLOB")
+private byte[] image;
+```
+스프링부트에서 실행을 한다. <br>
+![image](https://github.com/user-attachments/assets/6acaeb00-46ba-4de8-97f8-55791ff57a48) <br>
+MySQL DB에서 데이터가 잘 저장된 것을 확인한다. <br><br>
 
 
 
-
-
-
+<br><br><br><br><br><br>
+<br><br><br><br><br><br>
+<br><br><br><br><br><br>
 
 
 ### :bulb: 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
