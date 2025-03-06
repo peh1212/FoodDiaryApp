@@ -151,6 +151,7 @@ public class CSVDataLoader {
 ```
 
 7. DB에 저장된 식당 정보들과 이미지들을 조회할 수 있는 컨트롤러 구현 <br>
+(DB 확인용) <br>
 ### RestaurantController.java
 ```Java
 @RestController
@@ -214,6 +215,7 @@ public class RestaurantController {
 <br>
 
 8. DB 정보를 JSON으로 반환해주는 컨트롤러 구현 <br>
+(안드로이드 Retrofit에서 사용하기 위한 컨트롤러) <br>
 ### RetrofitController.java
 ```Java
 @RestController
