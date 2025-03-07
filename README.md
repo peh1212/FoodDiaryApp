@@ -1,4 +1,4 @@
-### :bulb: [1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기](https://github.com/peh1212/HannipmanApp/blob/main/1.%20HannipmanApp.zip) <br>
+## :blue_book:  [1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기](https://github.com/peh1212/HannipmanApp/blob/main/1.%20HannipmanApp.zip) <br>
 1. 식당 정보를 restaurantDB.csv 파일로 작성하여 `(프로젝트폴더)/src/main/resources/data` 폴더에 저장
 ### restaurantDB.csv
 ```Java
@@ -150,7 +150,7 @@ public class CSVDataLoader {
 }
 ```
 
-7. DB에 저장된 식당 정보들과 이미지들을 조회할 수 있는 컨트롤러 구현 <br>
+7. DB에 저장된 식당 정보들과 이미지들을 html에서 조회할 수 있는 컨트롤러 구현 <br>
 (DB 확인용) <br>
 ### RestaurantController.java
 ```Java
@@ -214,48 +214,8 @@ public class RestaurantController {
 ![식당DB 저장](https://github.com/user-attachments/assets/a7fa90d7-275b-4f72-9011-b9c01950bd7d) <br>
 <br>
 
-8. DB 정보를 JSON으로 반환해주는 컨트롤러 구현 <br>
-(안드로이드 Retrofit에서 사용하기 위한 컨트롤러) <br>
-### RetrofitController.java
-```Java
-@RestController
-@RequestMapping("/api/restaurants") // API의 기본 경로 설정
-public class RetrofitController {
 
-    private final RestaurantRepo restaurantRepo;
-
-    // Repository 주입
-    public RetrofitController(RestaurantRepo restaurantRepo) {
-        this.restaurantRepo = restaurantRepo;
-    }
-
-    // 모든 Restaurant 데이터 반환
-    @GetMapping
-    public List<Restaurant> getAllRestaurants() {
-        return restaurantRepo.findAll(); // Repository를 통해 모든 데이터를 반환
-    }
-
-    // 특정 ID의 Restaurant 데이터 반환
-    @GetMapping("/{id}")
-    public Restaurant getRestaurantById(@PathVariable Long id) {
-        return restaurantRepo.findById(id).orElseThrow(() ->
-                new RuntimeException("Restaurant not found with id: " + id)
-        );
-    }
-
-    // 새로운 Restaurant 데이터 생성
-    @PostMapping
-    public Restaurant createRestaurant(@RequestBody Restaurant restaurant) {
-        return restaurantRepo.save(restaurant); // 새로운 데이터 저장
-    }
-}
-```
-![image](https://github.com/user-attachments/assets/62b21ce4-ca89-40d4-a05b-a71cd95675ef) <br>
-<br>
-
-
-
-### :bulb: [2. MySQL DB 연동](https://github.com/peh1212/HannipmanApp/blob/main/2.%20HannipmanApp.zip) <br>
+## :blue_book:  [2. MySQL DB 연동하기](https://github.com/peh1212/HannipmanApp/blob/main/2.%20HannipmanApp.zip) <br>
 1. 설치하기 <br>
 `참고 링크` : https://code-angie.tistory.com/158 <br>
 설치 시 입력한 비밀번호를 기억해야한다<br>
@@ -373,14 +333,9 @@ interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
 }
 ```
 
-<br>
+<br><br>
 
-<br><br><br><br><br><br>
-<br><br><br><br><br><br>
-<br><br><br><br><br><br>
-
-
-### :bulb: 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
+## :blue_book:  3. 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
 1. dependencies 추가 <br>
 ### build.gradle.kts
 ```Java
@@ -453,10 +408,42 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 ```
 ![image](https://github.com/user-attachments/assets/fb1d2697-eb63-4b77-8adb-16dcbe48f087) <br>
 
-6. 스프링부트에서 식당정보 DB를 가져와 위도, 경도에 맞는 위치에 마커 표시하기 <br>
-dependencies 추가 <br>
+6. 스프링부트에서 식당정보 DB를 가져와 위도, 경도에 맞는 위치에 마커 표시하기 <br><br>
+dependencies에 retrofit 추가 <br>
 ### build.gradle.kts
 ```Java
 implementation("com.squareup.retrofit2:retrofit:2.9.0")
 implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+```
+스프링부트에서 RestaurantController에 위치정보를 반환하는 엔드포인트 정의 <br>
+### RestaurantController.java
+```Java
+@RestController
+@RequestMapping("/restaurants")
+public class RestaurantController {
+
+    @Autowired
+    private RestaurantRepo restaurantRepo;
+
+    (...)
+
+    @GetMapping("/locations")
+        public List<RestaurantDTO> getRestaurantLocations() {
+            return restaurantRepo.findAll().stream()
+                    .map(r -> new RestaurantDTO(r.getLatitude(), r.getLongitude(), r.getName()))
+                    .collect(Collectors.toList());
+        }
+```
+
+RestaurantDTO 정의 <br>
+### Restaurant.java
+```Java
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+class RestaurantDTO {
+    private Double latitude;
+    private Double longitude;
+    private String name;
+}
 ```
