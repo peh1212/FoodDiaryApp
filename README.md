@@ -347,6 +347,12 @@ implementation("com.google.android.gms:play-services-maps:17.0.1")
 ```Java
 <uses-permission android:name="android.permission.INTERNET"/>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<application
+(...)
+android:usesCleartextTraffic="true"
+(...)
+</application>
 ```
 
 3. 구글맵 API Key 추가 <br>
@@ -386,13 +392,13 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // SupportMapFragment를 얻고, 비동기적으로 지도를 초기화합니다.
+        // SupportMapFragment를 얻고, 지도를 비동기적으로 초기화
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
     }
 
-    // 지도가 준비되었을 때 호출됩니다.
+    // 지도가 준비되었을 때 호출
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -447,3 +453,132 @@ class RestaurantDTO {
     private String name;
 }
 ```
+
+<br>
+
+안드로이드 스튜디오에서 RestaurantDTO 정의 <br>
+### RestaurantDTO.java
+```Java
+public class RestaurantDTO {
+    private Double latitude;
+    private Double longitude;
+    private String name;
+
+    // 기본 생성자
+    public RestaurantDTO() {
+    }
+
+    // 파라미터가 있는 생성자
+    public RestaurantDTO(Double latitude, Double longitude, String name) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.name = name;
+    }
+
+    // Getter와 Setter 메서드
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+레트로핏 설정을 위한 인터페이스와 서비스 클래스 작성 <br>
+### RestaurantService.java
+```Java
+public interface RestaurantService {
+    @GET("/restaurants/locations")
+    Call<List<RestaurantDTO>> getRestaurantLocations();
+}
+```
+
+### RetrofitClient.java
+```Java
+public class RetrofitClient {
+    private static final String BASE_URL = "http://10.0.2.2:8080"; // 안드로이드 에뮬레이터 주소
+
+    private static Retrofit retrofit;
+
+    public static Retrofit getInstance() {
+        if (retrofit == null) {
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(BASE_URL)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
+        }
+        return retrofit;
+    }
+}
+```
+메인액티비티 수정 <br>
+### MainActivity.java
+```Java
+public class MainActivity extends FragmentActivity implements OnMapReadyCallback {
+
+    private GoogleMap mMap;
+    private RestaurantService restaurantService;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // Retrofit 초기화
+        restaurantService = RetrofitClient.getInstance().create(RestaurantService.class);
+
+        // SupportMapFragment를 얻고, 지도를 비동기적으로 초기화
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+    }
+
+    // 지도가 준비되었을 때 호출
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // 서버에서 레스토랑 위치 데이터 가져오기
+        restaurantService.getRestaurantLocations().enqueue(new Callback<List<RestaurantDTO>>() {
+            @Override
+            public void onResponse(Call<List<RestaurantDTO>> call, Response<List<RestaurantDTO>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    for (RestaurantDTO restaurant : response.body()) {
+                        LatLng location = new LatLng(restaurant.getLatitude(), restaurant.getLongitude());
+                        mMap.addMarker(new MarkerOptions().position(location).title(restaurant.getName()));
+                    }
+                    if (!response.body().isEmpty()) {
+                        LatLng firstLocation = new LatLng(response.body().get(0).getLatitude(), response.body().get(0).getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLocation, 10));
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<RestaurantDTO>> call, Throwable t) {
+                // 실패 시 처리
+                Log.e("Retrofit", "Failed to fetch restaurant locations", t);
+            }
+        });
+    }
+}
+```
+<br>
+![image](https://github.com/user-attachments/assets/a37bd5d1-477e-4cb2-9556-fa53003568fb) <br>
