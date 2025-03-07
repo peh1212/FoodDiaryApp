@@ -576,7 +576,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
             @Override
             public void onFailure(Call<List<RestaurantDTO>> call, Throwable t) {
                 // 실패 시 처리
-                Log.e("Retrofit", "불러오기 실패", t);
+                Log.e("Retrofit", "Failed", t);
             }
         });
     }
