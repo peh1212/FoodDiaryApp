@@ -151,7 +151,7 @@ public class CSVDataLoader {
 ```
 
 7. DB에 저장된 식당 정보들과 이미지들을 html에서 조회할 수 있는 컨트롤러 구현 <br>
-(DB 확인용) <br>
+(DB 내용 확인용) <br>
 ### RestaurantController.java
 ```Java
 @RestController
