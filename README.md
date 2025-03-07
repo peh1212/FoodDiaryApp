@@ -335,7 +335,8 @@ interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
 
 <br><br>
 
-## :blue_book:  3. 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기 <br>
+## :blue_book:  [3. 안드로이드 스튜디오에서 구글맵을 띄우고 식당 정보 DB에 저장된 위도/경도에 맞게 지도에 위치 표시하기]() <br>
+[안드로이드스튜디오](https://github.com/peh1212/HannipmanApp/blob/main/3.%20Android%20Studio%20-%20HannipmanApp.zip) [스프링부트](https://github.com/peh1212/HannipmanApp/blob/main/3.%20Spring%20Boot%20-%20HannipmanApp.zip)
 1. dependencies 추가 <br>
 ### build.gradle.kts
 ```Java
