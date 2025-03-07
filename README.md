@@ -457,6 +457,7 @@ class RestaurantDTO {
 <br>
 
 안드로이드 스튜디오에서 RestaurantDTO 정의 <br>
+안드로이드에서는 Lombok이 없으므로 Constructor와 Getter Setter를 직접 작성해준다. <br>
 ### RestaurantDTO.java
 ```Java
 public class RestaurantDTO {
@@ -581,4 +582,5 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 }
 ```
 <br>
+
 ![image](https://github.com/user-attachments/assets/a37bd5d1-477e-4cb2-9556-fa53003568fb) <br>
