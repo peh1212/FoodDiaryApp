@@ -9,7 +9,7 @@ id,name,menu,price,rating,kategorie,phonenumber,businesshours,closeddays,breakti
 3,감자탕마을,"감자탕(소),등뼈해물찜(소),삼계탕,뼈해장국,생고기김치찌개,양푼비빔밥,냉면","35000,45000,14000,10000,10000,10000,10000",4.4,한식,0507-1448-0645,09:30~21:30,수요일,없음,없음,인천 서구 대평로 5,37.5470754604579,126.676444921014
 4,성원닭갈비,"닭갈비(소),닭갈비(중),닭갈비(대),치즈볶음밥,알밥,라면 떡사리,쫄면 우동사리","29000,36000,44000,4000,4000,2000,2000",4.5,한식,032-567-8996,10:30~24:30,없음,없음,없음,인천 서구 탁옥로 49,37.5440877141166,126.675082992027
 5,교동짬뽕,"교동짬뽕,찹쌀탕수육 미니,삼선짬뽕,짜장면,쟁반짜장,우동","9500,14000,13000,7000,9500,9500",4.4,중식,0507-1442-8894,11:00~21:00,월요일,없음,있음,인천 서구 심곡로 35,37.542395856533,126.67346149477
-6,촌장골,"소 왕 갈비,한우 설화꽃살,촌장 돼지양념구이,왕 갈비탕(2대),차돌 된장찌개,정통 함흥냉면","48000,62000,19000,17000,10000,11000",4.3,032-562-4343,11:00~22:00,없음,없음,없음,인천 서구 서곶로 296,37.5440759399952,126.677163071146
+6,촌장골,"소 왕 갈비,한우 설화꽃살,촌장 돼지양념구이,왕 갈비탕(2대),차돌 된장찌개,정통 함흥냉면","48000,62000,19000,17000,10000,11000",4.3,한식,032-562-4343,11:00~22:00,없음,없음,없음,인천 서구 서곶로 296,37.5440759399952,126.677163071146
 7,태백산,"한돈왕갈비,한우 1++ 갈비살,소왕갈비,한우 1++ 등심,명품삼겹살,한우육회","21000,43000,45000,53000,18000,33000",4.5,한식,032-567-3331,11:00~22:00,없음,없음,없음,인천 서구 서곶로315번길 26,37.5460050248938,126.673903592051
 8,박군술상,"스지탕,육회물회,한근탕수육,차돌짬뽕파스타,쫄뱅이,생고기김치찌개,피꼬막초무침","26000,18000,14000,15000,15000,15000,15000",4.5,한식,0507-1405-9355,17:00~23:50,일요일,없음,없음,인천 서구 탁옥로 10,37.5439021680194,126.670487197643
 9,잊지못회,"광어(1인),우럭(1인),연어(1인),광어+우럭(1인),광어+연어(1인),우럭+연어(1인)","23000,23000,25000,23000,25000,25000",4.4,한식,0507-1360-7715,14:00~24:00,없음,없음,없음,인천 서구 대평로8번길 2,37.5474120340164,126.676332342388
@@ -78,29 +78,50 @@ spring.jpa.hibernate.ddl-auto=update
 public class Restaurant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long id;  // 식당 DB 기본키, 자동증가
 
     @Column
-    private String name;
+    private String name;  // 식당 이름
 
     @ElementCollection
-    private List<String> menu;
+    private List<String> menu;  // 식당 메뉴 리스트
 
     @ElementCollection
-    private List<Integer> price;
+    private List<Integer> price;  // 식당 메뉴 가격 리스트
 
     @Column
-    private Double rating;
+    private String kategorie;  // 카테고리(한식, 중식, 일식, 양식)
 
     @Column
-    private Double latitude;
+    private String phoneNumber;  // 연락처
 
     @Column
-    private Double longitude;
+    private String businessHours;  // 영업시간
+
+    @Column
+    private String closedDays;  // 휴무일
+
+    @Column
+    private String breakTime;  // 브레이크타임
+
+    @Column
+    private String kiosk;  // 키오스크 유무
+
+    @Column
+    private String place;  // 주소
+
+    @Column
+    private Double rating;  // 별점
+
+    @Column
+    private Double latitude;  // 위도
+
+    @Column
+    private Double longitude;  // 경도
 
     @Lob
-    @Column
-    private byte[] image;
+    @Column(columnDefinition = "LONGBLOB")  // MySQL DB 저장시 LONGLOB타입으로 저장
+    private byte[] image;  // 식당 이미지
 }
 
 interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
@@ -131,8 +152,15 @@ public class CSVDataLoader {
                 restaurant.setMenu(Arrays.asList(line[2].split(",")));
                 restaurant.setPrice(parsePrices(line[3]));
                 restaurant.setRating(Double.parseDouble(line[4]));
-                restaurant.setLatitude(Double.parseDouble(line[5]));
-                restaurant.setLongitude(Double.parseDouble(line[6]));
+                restaurant.setKategorie(line[5]);
+                restaurant.setPhoneNumber(line[6]);
+                restaurant.setBusinessHours(line[7]);
+                restaurant.setClosedDays(line[8]);
+                restaurant.setBreakTime(line[9]);
+                restaurant.setKiosk(line[10]);
+                restaurant.setPlace(line[11]);
+                restaurant.setLatitude(Double.parseDouble(line[12]));
+                restaurant.setLongitude(Double.parseDouble(line[13]));
 
                 // 이미지 파일 읽어오기
                 String imageFileName = line[0] + ".jpg"; // 예: "1.jpg"
@@ -187,13 +215,6 @@ public class RestaurantController {
         for (Restaurant restaurant : restaurants) {
             htmlResponse.append("<li>");
             htmlResponse.append("<h2>").append(restaurant.getName()).append("</h2>");
-            htmlResponse.append("<p><strong>Menu:</strong> ").append(String.join(", ", restaurant.getMenu())).append("</p>");
-            htmlResponse.append("<p><strong>Price:</strong> ").append(restaurant.getPrice()).append("</p>");
-            htmlResponse.append("<p><strong>Rating:</strong> ").append(restaurant.getRating()).append("</p>");
-            htmlResponse.append("<p><strong>Location:</strong> ")
-                    .append(restaurant.getLatitude()).append(", ").append(restaurant.getLongitude())
-                    .append("</p>");
-
             if (restaurant.getImage() != null) {
                 String imageUrl = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort()
                         + "/restaurants/image/" + restaurant.getId();
@@ -201,6 +222,20 @@ public class RestaurantController {
             } else {
                 htmlResponse.append("<p>No image available</p>");
             }
+            htmlResponse.append("<p><strong>id:</strong> ").append(restaurant.getId()).append("</p>");
+            htmlResponse.append("<p><strong>Menu:</strong> ").append(String.join(", ", restaurant.getMenu())).append("</p>");
+            htmlResponse.append("<p><strong>Price:</strong> ").append(restaurant.getPrice()).append("</p>");
+            htmlResponse.append("<p><strong>Rating:</strong> ").append(restaurant.getRating()).append("</p>");
+            htmlResponse.append("<p><strong>Location:</strong> ")
+                    .append(restaurant.getLatitude()).append(", ").append(restaurant.getLongitude())
+                    .append("</p>");
+            htmlResponse.append("<p><strong>Category:</strong> ").append(restaurant.getKategorie()).append("</p>");
+            htmlResponse.append("<p><strong>Phone Number:</strong> ").append(restaurant.getPhoneNumber()).append("</p>");
+            htmlResponse.append("<p><strong>Business Hours:</strong> ").append(restaurant.getBusinessHours()).append("</p>");
+            htmlResponse.append("<p><strong>Closed Days:</strong> ").append(restaurant.getClosedDays()).append("</p>");
+            htmlResponse.append("<p><strong>Break Time:</strong> ").append(restaurant.getBreakTime()).append("</p>");
+            htmlResponse.append("<p><strong>Kiosk:</strong> ").append(restaurant.getKiosk()).append("</p>");
+            htmlResponse.append("<p><strong>Place:</strong> ").append(restaurant.getPlace()).append("</p>");
 
             htmlResponse.append("</li>");
         }
@@ -224,7 +259,7 @@ public class RestaurantController {
     }
 }
 ```
-![식당DB 저장](https://github.com/user-attachments/assets/a7fa90d7-275b-4f72-9011-b9c01950bd7d) <br>
+![image](https://github.com/user-attachments/assets/7271d276-f884-421c-bb1d-be64d6d61f44) <br>
 <br>
 
 
