@@ -8,7 +8,7 @@ id,diary,name,menu,price,rating,kategorie,phonenumber,businesshours,closeddays,b
 3,0,감자탕마을,"감자탕(소),등뼈해물찜(소),삼계탕,뼈해장국,생고기김치찌개,양푼비빔밥,냉면","35000,45000,14000,10000,10000,10000,10000",4.4,한식,0507-1448-0645,09:30~21:30,수요일,없음,없음,인천 서구 대평로 5,37.5470754604579,126.676444921014
 4,0,성원닭갈비,"닭갈비(소),닭갈비(중),닭갈비(대),치즈볶음밥,알밥,라면 떡사리,쫄면 우동사리","29000,36000,44000,4000,4000,2000,2000",4.5,한식,032-567-8996,10:30~24:30,없음,없음,없음,인천 서구 탁옥로 49,37.5440877141166,126.675082992027
 5,1,교동짬뽕,"교동짬뽕,찹쌀탕수육 미니,삼선짬뽕,짜장면,쟁반짜장,우동","9500,14000,13000,7000,9500,9500",4.4,중식,0507-1442-8894,11:00~21:00,월요일,없음,있음,인천 서구 심곡로 35,37.542395856533,126.67346149477
-6,0,촌장골,"소 왕 갈비,한우 설화꽃살,촌장 돼지양념구이,왕 갈비탕(2대),차돌 된장찌개,정통 함흥냉면","48000,62000,19000,17000,10000,11000",4.3,032-562-4343,11:00~22:00,없음,없음,없음,인천 서구 서곶로 296,37.5440759399952,126.677163071146
+6,0,촌장골,"소 왕 갈비,한우 설화꽃살,촌장 돼지양념구이,왕 갈비탕(2대),차돌 된장찌개,정통 함흥냉면","48000,62000,19000,17000,10000,11000",4.3,한식,032-562-4343,11:00~22:00,없음,없음,없음,인천 서구 서곶로 296,37.5440759399952,126.677163071146
 7,0,태백산,"한돈왕갈비,한우 1++ 갈비살,소왕갈비,한우 1++ 등심,명품삼겹살,한우육회","21000,43000,45000,53000,18000,33000",4.5,한식,032-567-3331,11:00~22:00,없음,없음,없음,인천 서구 서곶로315번길 26,37.5460050248938,126.673903592051
 8,0,박군술상,"스지탕,육회물회,한근탕수육,차돌짬뽕파스타,쫄뱅이,생고기김치찌개,피꼬막초무침","26000,18000,14000,15000,15000,15000,15000",4.5,한식,0507-1405-9355,17:00~23:50,일요일,없음,없음,인천 서구 탁옥로 10,37.5439021680194,126.670487197643
 9,0,잊지못회,"광어(1인),우럭(1인),연어(1인),광어+우럭(1인),광어+연어(1인),우럭+연어(1인)","23000,23000,25000,23000,25000,25000",4.4,한식,0507-1360-7715,14:00~24:00,없음,없음,없음,인천 서구 대평로8번길 2,37.5474120340164,126.676332342388
@@ -311,11 +311,11 @@ Restaurant 엔티티에서 image의 컬럼을 `LONGBLOB` 타입으로 설정해�
 private byte[] image;
 ```
 스프링부트에서 실행을 한다. <br>
-![image](https://github.com/user-attachments/assets/6acaeb00-46ba-4de8-97f8-55791ff57a48) <br>
+![image](https://github.com/user-attachments/assets/4bb1d1ce-bd47-4e86-98cd-642c782fbb18) <br>
 MySQL DB에서 데이터가 잘 저장된 것을 확인한다. <br><br>
 
 3. 중복저장 피하기 <br>
-스프링부트 서버를 실행할때마다 똑같은 데이터가 20개씩 늘어나므로 CSVDataLoader에 중복저장을 피하는 로직을 추가한다. <br>
+스프링부트 서버를 실행할때마다 똑같은 데이터가 30개씩 늘어나므로 CSVDataLoader에 중복저장을 피하는 로직을 추가한다. <br>
 ### CSVDataLoader.java
 ```Java
 @Service
@@ -334,30 +334,41 @@ public class CSVDataLoader {
             reader.readNext(); // 헤더 건너뛰기
 
             while ((line = reader.readNext()) != null) {
-                // 중복 검사
-                if (!restaurantRepo.existsByName(line[1])) {
-                    Restaurant restaurant = new Restaurant();
-                    restaurant.setName(line[1]);
-                    restaurant.setMenu(Arrays.asList(line[2].split(",")));
-                    restaurant.setPrice(parsePrices(line[3]));
-                    restaurant.setRating(Double.parseDouble(line[4]));
-                    restaurant.setLatitude(Double.parseDouble(line[5]));
-                    restaurant.setLongitude(Double.parseDouble(line[6]));
 
-                    // 이미지 파일 읽어오기
-                    String imageFileName = line[0] + ".jpg"; // 예: "1.jpg"
-                    File imageFile = new File(imageDirectoryPath + imageFileName);
-                    if (imageFile.exists()) {
-                        byte[] imageData = FileCopyUtils.copyToByteArray(new FileInputStream(imageFile));
-                        restaurant.setImage(imageData);
-                    } else {
-                        System.out.println(imageFileName + " 파일을 찾을 수 없습니다.");
-                    }
-
-                    restaurantRepo.save(restaurant);
-                } else {
-                    System.out.println(line[1] + " 이미 존재합니다.");
+                // 식당 이름으로 중복검사
+                String restaurantName = line[2];
+                if (restaurantRepo.existsByName(restaurantName)) {
+                    System.out.println("중복된 레스토랑: " + restaurantName);
+                    continue; // 이미 존재하면 해당 데이터를 건너뛰고 다음 데이터로 넘어감
                 }
+
+                Restaurant restaurant = new Restaurant();
+                restaurant.setDiary(line[1].equals("1"));
+                restaurant.setName(line[2]);
+                restaurant.setMenu(Arrays.asList(line[3].split(",")));
+                restaurant.setPrice(parsePrices(line[4]));
+                restaurant.setRating(Double.parseDouble(line[5]));
+                restaurant.setKategorie(line[6]);
+                restaurant.setPhoneNumber(line[7]);
+                restaurant.setBusinessHours(line[8]);
+                restaurant.setClosedDays(line[9]);
+                restaurant.setBreakTime(line[10]);
+                restaurant.setKiosk(line[11]);
+                restaurant.setPlace(line[12]);
+                restaurant.setLatitude(Double.parseDouble(line[13]));
+                restaurant.setLongitude(Double.parseDouble(line[14]));
+
+                // 이미지 파일 읽어오기
+                String imageFileName = line[0] + ".jpg"; // 예: "1.jpg"
+                File imageFile = new File(imageDirectoryPath + imageFileName);
+                if (imageFile.exists()) {
+                    byte[] imageData = FileCopyUtils.copyToByteArray(new FileInputStream(imageFile));
+                    restaurant.setImage(imageData);
+                } else {
+                    System.out.println(imageFileName + " 파일을 찾을 수 없습니다.");
+                }
+
+                restaurantRepo.save(restaurant);
             }
             System.out.println("CSV 데이터와 이미지를 성공적으로 저장했습니다!");
         } catch (Exception e) {
