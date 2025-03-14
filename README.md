@@ -648,3 +648,104 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 <br>
 
 ![image](https://github.com/user-attachments/assets/07f84a33-e757-4d03-ab3c-7fc92ba04dfb) <br>
+
+<br>
+
+## :black_nib:  [4. 사용자가 작성한 일기와 연결하기]() <br>
+`(다른 팀원이 작업한것)` <br>
+### FoodDiaryController.java
+```java
+@RestController
+@RequestMapping("/fooddiary")
+public class FoodDiaryController {
+
+    @Autowired
+    private FoodDiaryService foodDiaryService;
+
+    // 특정 식당의 일기 가져오기
+    @GetMapping("/{restaurantId}")
+    public ResponseEntity<List<FoodDiaryResponse>> getDiaries(@PathVariable Long restaurantId) {
+        List<FoodDiary> diaries = foodDiaryService.getDiariesByRestaurant(restaurantId);
+
+        if (diaries.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<FoodDiaryResponse> responseList = diaries.stream()
+                .map(diary -> new FoodDiaryResponse(
+                        diary.getId(),
+                        diary.getDiaryText(),
+                        diary.getCreatedAt(),
+                        diary.getRestaurant().getId(),
+                        diary.getPhotoPath()
+                ))
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(responseList);
+    }
+
+    // 새로운 일기 추가
+    @PostMapping(consumes = "multipart/form-data")
+    public ResponseEntity<String> addDiary(
+            @RequestParam Long restaurantId,
+            @RequestParam String diaryText,
+            @RequestParam(required = false) MultipartFile photo) throws IOException {
+
+        byte[] photoBytes = null;
+        if (photo != null && !photo.isEmpty()) {
+            photoBytes = photo.getBytes();
+        }
+
+        foodDiaryService.saveDiary(restaurantId, diaryText, photoBytes);
+
+        return ResponseEntity.ok("일기가 성공적으로 추가되었습니다.");
+    }
+
+    // 일기 수정
+    @PutMapping("/{diaryId}")
+    public ResponseEntity<String> updateDiary(
+            @PathVariable Long diaryId,
+            @RequestParam String diaryText,
+            @RequestParam(required = false) MultipartFile photo) throws IOException {
+
+        byte[] photoBytes = null;
+        if (photo != null && !photo.isEmpty()) {
+            photoBytes = photo.getBytes();
+        }
+
+        foodDiaryService.updateDiary(diaryId, diaryText, photoBytes);
+
+        return ResponseEntity.ok("일기가 성공적으로 수정되었습니다.");
+    }
+
+    // 일기 삭제
+    @DeleteMapping("/{diaryId}")
+    public ResponseEntity<String> deleteDiary(@PathVariable Long diaryId) throws IOException {
+        foodDiaryService.deleteDiary(diaryId);
+        return ResponseEntity.ok("일기가 성공적으로 삭제되었습니다.");
+    }
+
+    // 전체 삭제
+    @DeleteMapping("/deleteAll")
+    public ResponseEntity<String> deleteAllDiaries() throws IOException {
+        foodDiaryService.deleteAllDiaries();
+        return ResponseEntity.ok("모든 일기가 성공적으로 삭제되었습니다.");
+    }
+
+    // 자동 증가 값 초기화
+    @DeleteMapping("/resetAutoIncrement")
+    public ResponseEntity<String> resetAutoIncrement() {
+        foodDiaryService.resetAutoIncrement();
+        return ResponseEntity.ok("자동 증가 값이 성공적으로 초기화되었습니다.");
+    }
+}
+```
+`/fooddiary`로 POST요청으로 `restaurantId`, `diaryText`, `photo`를 보내면 일기가 추가된다. <br><br>
+포스트맨으로 POST 요청 보내기 <br>
+![image](https://github.com/user-attachments/assets/d539ac57-5d2e-4f64-9694-ae5bb2abfa2a) <br><br>
+food_diary 테이블이 생긴다. <br>
+![image](https://github.com/user-attachments/assets/dd6477c7-e3f6-45ed-aad3-28899575bc60) <br><br>
+포스트맨으로 보낸 POST요청으로 일기가 작성되어 DB에 추가되었다. <br>
+![image](https://github.com/user-attachments/assets/ea3dc8b5-ebfd-4689-9e4f-51d4f04a03f3) <br><br>
+
+
