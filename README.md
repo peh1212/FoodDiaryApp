@@ -1,5 +1,5 @@
-## :blue_book:  [1. 식당정보 CSV 파일과 이미지 파일을 DB에 저장하기](https://github.com/peh1212/HannipmanApp/blob/main/1.%20HannipmanApp.zip) <br>
-`프로젝트 생성` : https://start.spring.io/ <br>
+## :blue_book:  [1. 식당 정보 테이블을 작성하고 식당 정보를 제공해주는 API 만들기](https://github.com/peh1212/HannipmanApp/blob/main/1.%20HannipmanApp.zip) <br>
+`스프링부트 프로젝트 생성` : https://start.spring.io/ <br>
 1. 식당 정보를 restaurantDB.csv 파일로 작성하여 `(프로젝트폴더)/src/main/resources/data` 폴더에 저장
 ### restaurantDB.csv
 ```Java
@@ -285,7 +285,7 @@ public class RestaurantController {
 ```
 ![image](https://github.com/user-attachments/assets/31e24725-66d2-4dad-b08c-c46c158764cc) <br>
 <br>
-
+<br><br><br>
 
 ## :floppy_disk: [2. MySQL DB 연동하기](https://github.com/peh1212/HannipmanApp/blob/main/2.%20HannipmanApp.zip) <br>
 1. 설치하기 <br>
@@ -423,7 +423,7 @@ interface RestaurantRepo extends JpaRepository<Restaurant, Long> {
 }
 ```
 
-<br><br>
+<br><br><br>
 
 ## :earth_asia: [3. 안드로이드 스튜디오에서 식당 정보 DB에 저장된 위도/경도를 구글맵에 띄워보기]() <br>
 [안드로이드스튜디오](https://github.com/peh1212/HannipmanApp/blob/main/3.%20Android%20Studio%20-%20HannipmanApp.zip) [스프링부트](https://github.com/peh1212/HannipmanApp/blob/main/3.%20Spring%20Boot%20-%20HannipmanApp.zip)
@@ -676,7 +676,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 
 ![image](https://github.com/user-attachments/assets/07f84a33-e757-4d03-ab3c-7fc92ba04dfb) <br>
 
-<br>
+<br><br><br>
 
 ## :black_nib:  [4. 사용자가 작성한 일기와 연결하기]() <br>
 `(다른 팀원이 작업한것)` <br>
@@ -775,5 +775,6 @@ food_diary 테이블이 생긴다. <br>
 포스트맨으로 보낸 POST요청으로 일기가 작성되어 DB에 추가되었다. <br>
 ![image](https://github.com/user-attachments/assets/ea3dc8b5-ebfd-4689-9e4f-51d4f04a03f3) <br><br>
 
+<br><br>
 
-## :artificial_satellite: [5. AWS]() <br>
+## :globe_with_meridians: [5. AWS 서버에 프로젝트 등록하기]() <br>
