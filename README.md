@@ -778,3 +778,9 @@ food_diary 테이블이 생긴다. <br>
 <br><br>
 
 ## :globe_with_meridians: [5. AWS 서버에 프로젝트 등록하기]() <br>
+IntelliJ IDEA에서 스프링부트 프로젝트를 열고 터미널에서 빌드하기 <br>
+![image](https://github.com/user-attachments/assets/de7ba917-08c3-4e7f-b2a1-ef87a732a0f9) <br>
+빌드 완료 후 웹서버 구동 확인 <br>
+![image](https://github.com/user-attachments/assets/bf9a9007-e7c6-4fb0-a754-29df884222d8) <br>
+구동 확인 후 터미널에서 ctrl+c 눌러 종료하고 exit입력 <br><br><br>
+
