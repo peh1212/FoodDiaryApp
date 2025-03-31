@@ -679,7 +679,7 @@ public class MainActivity extends FragmentActivity implements OnMapReadyCallback
 <br><br><br>
 
 ## :black_nib:  [4. 사용자가 작성한 일기와 연결하기]() <br>
-`(다른 팀원이 작업한것)` <br>
+[`(다른 팀원이 작업한것)`](https://github.com/sunun2/FoodDiary) <br>
 ### FoodDiaryController.java
 ```java
 @RestController
